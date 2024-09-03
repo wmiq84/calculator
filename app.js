@@ -1,66 +1,67 @@
-
-let firstNumber = null;
+let firstNumber = '';
 let operator = null;
-let secondNumber = null;
-
-
+let secondNumber = '';
+let opClicked = false;
 
 const nums = document.querySelectorAll('.num');
+const operators = document.querySelectorAll('.operator');
 const equal = document.querySelector('#equal');
+const clear = document.querySelector('#clear');
 const disp = document.querySelector('#display');
 
 nums.forEach((num) => {
-    num.addEventListener('click', populateDisplay);
+    num.addEventListener('click', (event) => {
+        const clickedNumber = event.target.innerText;
+        if (!opClicked) {
+            firstNumber += clickedNumber;
+            disp.innerText = firstNumber;
+        } else {
+            secondNumber += clickedNumber;
+            disp.innerText = firstNumber + secondNumber;
+        }
+    });
 });
 
-//updates displays and stores values
-function populateDisplay(event) {
-    const clicked = event.target;
-    disp_value = clicked.innerText;
-    if (event.target.innerText != 'Equals') disp.append(disp_value);
-    
-    if (event.target.innerText === 'Equals')
-        operate(
-            parseFloat(firstNumber), 
-            parseFloat(secondNumber), 
-            operator);
-    else if (firstNumber === null) {
-        firstNumber = disp_value;
-        console.log(firstNumber);
+operators.forEach((op) => {
+    op.addEventListener('click', (event) => {
+        if (firstNumber !== '') {
+            opClicked = true;
+            operator = event.target.innerText;
+        }
+    });
+});
+
+equal.addEventListener('click', () => {
+    if (firstNumber !== '' && secondNumber !== '' && operator !== null) {
+        const result = operate(parseFloat(firstNumber), parseFloat(secondNumber), operator);
+        disp.innerText = result;
+        firstNumber = result.toString();
+        secondNumber = '';
+        operator = null;
+        opClicked = false;
     }
-    else if (operator === null) {
-        operator = disp_value;
-        console.log(operator);
-    }
-    else if (secondNumber === null) {
-        secondNumber = disp_value;
-        console.log(secondNumber);
-    }
-}
+});
 
-function add(firstNumber, secondNumber) {
-    console.log(firstNumber + secondNumber);
-}
-
-function subtract(firstNumber, secondNumber) {
-    console.log(firstNumber - secondNumber);
-}
-
-function multiply(firstNumber, secondNumber) {
-    console.log(firstNumber * secondNumber);
-}
-
-function divide(firstNumber, secondNumber) {
-    console.log(firstNumber - secondNumber);
-}
+clear.addEventListener('click', () => {
+    firstNumber = '';
+    operator = null;
+    secondNumber = '';
+    disp.innerText = '';
+    opClicked = false;
+});
 
 function operate(firstNumber, secondNumber, operator) {
     switch (operator) {
         case '+':
-            add(firstNumber, secondNumber);
+            return firstNumber + secondNumber;
         case '-':
+            return firstNumber - secondNumber;
         case '*':
+            return firstNumber * secondNumber;
         case '/':
+            return firstNumber / secondNumber;
+        default:
+            console.log('Unknown operator');
+            return null;
     }
 }
-
